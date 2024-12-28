@@ -232,8 +232,6 @@ CREATE TABLE alquiler_vehiculos (
     CONSTRAINT fK_tipoVehiculoID FOREIGN KEY (tipo_vehiculo) REFERENCES tipoVehiculo (id_tipoVehiculo)
 );
 
-
- 
 CREATE TABLE servicioCliente(
     id_servicio INT NOT NULL,
     num_documento_cliente VARCHAR (9) NOT NULL,
@@ -343,26 +341,27 @@ VALUES
 
 INSERT INTO empleados (id_cargoEmpleado, NombreEmpleado, apellidos, dni, domicilio) 
 VALUES
-(1, 'Luis', 'Pérez Gómez', '12345678A', 'Av. Central 45'),
-(2, 'Marta', 'López Martínez', '23456789B', 'Calle Mayor 12'),
-(3, 'Juan', 'González Hernández', '34567890C', 'Calle del Sol 23'),
-(4, 'Laura', 'Rodríguez Ruiz', '45678901D', 'Plaza Real 10'),
-(5, 'Carlos', 'Sánchez Torres', '56789012E', 'Calle Luna 8'),
-(6, 'Ana', 'Ramírez Ortega', '67890123F', 'Av. Marítima 33'),
+(1, 'Luis', 'Pérez Gómez', '12345678A', 'Av. Central 45, Madrid'),
+(2, 'Marta', 'López Martínez', '23456789B', 'Calle Mayor 12, Barcelona'),
+(3, 'Juan', 'González Hernández', '34567890C', 'Calle del Sol 23, Sevilla'),
+(4, 'Laura', 'Rodríguez Ruiz', '45678901D', 'Plaza Real 10, Valencia'),
+(5, 'Carlos', 'Sánchez Torres', '56789012E', 'Calle Luna 8, Málaga'),
+(6, 'Ana', 'Ramírez Ortega', '67890123F', 'Av. Marítima 33, Alicante'),
 (7, 'Miguel', 'Fernández Vargas', '78901234G', 'Paseo del Río 15, Bilbao'),
-(8, 'Raquel', 'Martínez Moreno', '89012345H', 'Calle Jardines 20'),
-(9, 'Lucía', 'Moreno García', '90123456I', 'Av. de la Paz 14'),
-(10, 'José', 'Díaz Álvarez', '01234567J', 'Calle Palma 7'),
-(11, 'Carmen', 'Mendoza Soto', '11121314K', 'Av. Mediterráneo 21'),
-(12, 'Javier', 'Cruz Pacheco', '21231415L', 'Calle del Parque 4'),
-(13, 'Sofía', 'Ortiz Castillo', '31341516M', 'Plaza Mayor 3'),
-(14, 'Antonio', 'Castillo Luna', '41451617N', 'Calle del Olivo 18'),
-(15, 'Rosa', 'Luna Romero', '51561718O', 'Av. España 56'),
-(6, 'Pedro', 'Romero Iglesias', '61671819P', 'Calle de los Pinos 9'),
-(4, 'Clara', 'Iglesias Ramos', '71781920Q', 'Calle Alameda 12'),
-(7, 'Ángel', 'Vega Campos', '81892021R', 'Plaza Nueva 17'),
-(2, 'Paula', 'Paredes López', '91902122S', 'Calle Buenavista 30'),
-(3, 'Hugo', 'López García', '02012223T', 'Av. Libertad 25');
+(8, 'Raquel', 'Martínez Moreno', '89012345H', 'Calle Jardines 20, Granada'),
+(9, 'Lucía', 'Moreno García', '90123456I', 'Av. de la Paz 14, Zaragoza'),
+(10, 'José', 'Díaz Álvarez', '01234567J', 'Calle Palma 7, Toledo'),
+(11, 'Carmen', 'Mendoza Soto', '11121314K', 'Av. Mediterráneo 21, Murcia'),
+(12, 'Javier', 'Cruz Pacheco', '21231415L', 'Calle del Parque 4, Cádiz'),
+(13, 'Sofía', 'Ortiz Castillo', '31341516M', 'Plaza Mayor 3, Salamanca'),
+(14, 'Antonio', 'Castillo Luna', '41451617N', 'Calle del Olivo 18, Valladolid'),
+(15, 'Rosa', 'Luna Romero', '51561718O', 'Av. España 56, Oviedo'),
+(6, 'Pedro', 'Romero Iglesias', '61671819P', 'Calle de los Pinos 9, Santiago'),
+(4, 'Clara', 'Iglesias Ramos', '71781920Q', 'Calle Alameda 12, León'),
+(7, 'Ángel', 'Vega Campos', '81892021R', 'Plaza Nueva 17, Huelva'),
+(2, 'Paula', 'Paredes López', '91902122S', 'Calle Buenavista 30, Burgos'),
+(3, 'Hugo', 'López García', '02012223T', 'Av. Libertad 25, Córdoba');
+
 
 
 INSERT INTO telefonos_empleados (id_empleado, telefono) 
