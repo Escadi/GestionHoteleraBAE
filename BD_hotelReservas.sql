@@ -201,7 +201,7 @@ CREATE TABLE tipoExcursion(
 CREATE TABLE excursiones (
     id_servicio INT NOT NULL,
     cifEmpresa VARCHAR(9) NOT NULL,
-    tipoExcursion IS NOT NULL,
+    tipoExcursion INT NOT NULL,
     nombreExcursion VARCHAR(50) NOT NULL,
     precio DECIMAL(10,2) NOT NULL,
     lugar VARCHAR (50),
@@ -256,7 +256,7 @@ VALUES
 ('Michael', 'Smith', NULL,'michael.smith@example.com'),
 ('Sofia', 'Garcia', 'Ramirez','sofia.garcia@example.com'), 
 ('Isabella', 'Müller', NULL,'isabella.muller@example.com'), 
-('Hugo', 'Silva', 'Almeida', NULL, 'hugo.silva@example.com'), 
+('Hugo', 'Silva', 'Almeida', 'hugo.silva@example.com'), 
 ('Ethan', 'Kim', NULL, 'ethan.kim@example.com'), 
 ('Daniel', 'Ivanov', NULL,'daniel.ivanov@example.com'), 
 ('Liam', 'OConnor', NULL,'liam.oconnor@example.com'),
@@ -269,8 +269,8 @@ INSERT INTO peticiones (id_usuario,peticion)
 VALUES 
 (3,'Necesito acceso para silla de ruedas'),
 (4,'Almohada extra, por favor'), 
-(5'Alergia a frutos secos'), 
-(9'Almohada extra, por favor');
+(5,'Alergia a frutos secos'), 
+(9,'Almohada extra, por favor');
  
 
 INSERT INTO cargos (nombre_cargo, sueldo) 
@@ -309,60 +309,60 @@ VALUES
 
 INSERT INTO provincias (id_pais, nombre)
 VALUES
-1(1,'Buenos Aires'),
-2(2,'Dublin'),
-3(3,'Alicante'),
-4(3,'Valladolid'),
-5(4,'Berlin'),
-6(3,'Gijón'),
-7(3,'Madrid'),
-8(5,'Paris'),
-9(3,'Barcelona'),
-10(6,'Roma'),
-11(3,'Sevilla'),
-12(7,'Lisboa'),
-13(3,'Valencia'),
-14(8,'Pekin'),
-15(3,'Bilbao'),
-16(9,'Seul'),
-17(10,'Londres'),
-18(3,'Málaga'),
-19(3,'Granada'),
-20(3,'Zaragoza'),
-21(3,'Murcia'),
-22(3,'Cádiz'),
-23(3,'Salamanca'),
-24(3,'Córdoba'),
-25(3,'Burgos'),
-26(3,'Huelva'),
-27(3,'León'),
-28(3,'Santiago'),
-29(3,'Oviedo'),
-30(3,'Toledo'),
-31(11,'Nueva York');
+(1,'Buenos Aires'),
+(2,'Dublin'),
+(3,'Alicante'),
+(3,'Valladolid'),
+(4,'Berlin'),
+(3,'Gijón'),
+(3,'Madrid'),
+(5,'Paris'),
+(3,'Barcelona'),
+(6,'Roma'),
+(3,'Sevilla'),
+(7,'Lisboa'),
+(3,'Valencia'),
+(8,'Pekin'),
+(3,'Bilbao'),
+(9,'Seul'),
+(10,'Londres'),
+(3,'Málaga'),
+(3,'Granada'),
+(3,'Zaragoza'),
+(3,'Murcia'),
+(3,'Cádiz'),
+(3,'Salamanca'),
+(3,'Córdoba'),
+(3,'Burgos'),
+(3,'Huelva'),
+(3,'León'),
+(3,'Santiago'),
+(3,'Oviedo'),
+(3,'Toledo'),
+(11,'Nueva York');
 
-INSERT INTO empleados (id_cargoEmpleado, NombreEmpleado, apellidos, dni, domicilio,id_provincia) 
+INSERT INTO empleados (id_cargoEmpleado, NombreEmpleado, apellidos, dni, domicilio) 
 VALUES
-(1, 'Luis', 'Pérez Gómez', '12345678A', 'Av. Central 45',7),
-(2, 'Marta', 'López Martínez', '23456789B', 'Calle Mayor 12',9),
-(3, 'Juan', 'González Hernández', '34567890C', 'Calle del Sol 23',11),
-(4, 'Laura', 'Rodríguez Ruiz', '45678901D', 'Plaza Real 10',13),
-(5, 'Carlos', 'Sánchez Torres', '56789012E', 'Calle Luna 8',18),
-(6, 'Ana', 'Ramírez Ortega', '67890123F', 'Av. Marítima 33',3),
-(7, 'Miguel', 'Fernández Vargas', '78901234G', 'Paseo del Río 15, Bilbao',15),
-(8, 'Raquel', 'Martínez Moreno', '89012345H', 'Calle Jardines 20',19),
-(9, 'Lucía', 'Moreno García', '90123456I', 'Av. de la Paz 14',20),
-(10, 'José', 'Díaz Álvarez', '01234567J', 'Calle Palma 7',30),
-(11, 'Carmen', 'Mendoza Soto', '11121314K', 'Av. Mediterráneo 21',21),
-(12, 'Javier', 'Cruz Pacheco', '21231415L', 'Calle del Parque 4',22),
-(13, 'Sofía', 'Ortiz Castillo', '31341516M', 'Plaza Mayor 3',23),
-(14, 'Antonio', 'Castillo Luna', '41451617N', 'Calle del Olivo 18',4),
-(15, 'Rosa', 'Luna Romero', '51561718O', 'Av. España 56',29),
-(6, 'Pedro', 'Romero Iglesias', '61671819P', 'Calle de los Pinos 9',28),
-(4, 'Clara', 'Iglesias Ramos', '71781920Q', 'Calle Alameda 12',27),
-(7, 'Ángel', 'Vega Campos', '81892021R', 'Plaza Nueva 17',26),
-(2, 'Paula', 'Paredes López', '91902122S', 'Calle Buenavista 30',25),
-(3, 'Hugo', 'López García', '02012223T', 'Av. Libertad 25',24);
+(1, 'Luis', 'Pérez Gómez', '12345678A', 'Av. Central 45'),
+(2, 'Marta', 'López Martínez', '23456789B', 'Calle Mayor 12'),
+(3, 'Juan', 'González Hernández', '34567890C', 'Calle del Sol 23'),
+(4, 'Laura', 'Rodríguez Ruiz', '45678901D', 'Plaza Real 10'),
+(5, 'Carlos', 'Sánchez Torres', '56789012E', 'Calle Luna 8'),
+(6, 'Ana', 'Ramírez Ortega', '67890123F', 'Av. Marítima 33'),
+(7, 'Miguel', 'Fernández Vargas', '78901234G', 'Paseo del Río 15, Bilbao'),
+(8, 'Raquel', 'Martínez Moreno', '89012345H', 'Calle Jardines 20'),
+(9, 'Lucía', 'Moreno García', '90123456I', 'Av. de la Paz 14'),
+(10, 'José', 'Díaz Álvarez', '01234567J', 'Calle Palma 7'),
+(11, 'Carmen', 'Mendoza Soto', '11121314K', 'Av. Mediterráneo 21'),
+(12, 'Javier', 'Cruz Pacheco', '21231415L', 'Calle del Parque 4'),
+(13, 'Sofía', 'Ortiz Castillo', '31341516M', 'Plaza Mayor 3'),
+(14, 'Antonio', 'Castillo Luna', '41451617N', 'Calle del Olivo 18'),
+(15, 'Rosa', 'Luna Romero', '51561718O', 'Av. España 56'),
+(6, 'Pedro', 'Romero Iglesias', '61671819P', 'Calle de los Pinos 9'),
+(4, 'Clara', 'Iglesias Ramos', '71781920Q', 'Calle Alameda 12'),
+(7, 'Ángel', 'Vega Campos', '81892021R', 'Plaza Nueva 17'),
+(2, 'Paula', 'Paredes López', '91902122S', 'Calle Buenavista 30'),
+(3, 'Hugo', 'López García', '02012223T', 'Av. Libertad 25');
 
 
 INSERT INTO telefonos_empleados (id_empleado, telefono) 
@@ -409,7 +409,7 @@ VALUES
 ('102',1),
 ('103',1),
 ('104',1),
-('105',1,)
+('105',1),
 ('201',2),
 ('202',2),
 ('203',2),
@@ -436,7 +436,7 @@ VALUES
 ('604',9),
 ('605',10);
 
-INSERT INTO clientes (num_documento_cliente, nombre, apellido1, apellido2, residencia, fecha_nacimiento, id_provincia,id_pais) 
+INSERT INTO clientes (num_documento_cliente, nombre, apellido1, apellido2, domicilio, fecha_nacimiento, id_provincia,id_pais) 
 VALUES
 ('12345678A', 'Juan', 'Pérez', 'Gómez', 'Calle Gran Vía 10', '1990-05-12',7,3),
 ('23456789B', 'María', 'López', 'Martínez', 'Av. Diagonal 220', '1985-09-20',9,3),
@@ -765,7 +765,7 @@ VALUES
  
 INSERT INTO tipoVehiculo (tipoVehiculo,precio_dia) 
 VALUES
-('Coche compacto', 50,00),
+('Coche compacto', 50.00),
 ('SUV', 64.00),
 ('Coche de lujo',90.00),
 ('Monovolumen',36.00),
@@ -927,8 +927,30 @@ WHERE fecha_fin BETWEEN '2024-12-10' AND '2024-12-20';
 
 --CONSULTAS " FASE 6 "
 
+-- 1º ¿Cuántas reservas se realizaron para el mes de diciembre de 2024? ¿Y cuales de ellas su salida fue en enero de 2025?
+SELECT * FROM RESERVAS 
+WHERE fecha_inicio BETWEEN '2024-12-01 00:00:00' AND '2024-12-31 23:59:59'; 
+
+SELECT * FROM RESERVAS 
+WHERE fecha_inicio BETWEEN '2024-12-01 00:00:00' AND '2024-12-31 23:59:59' 
+AND fecha_fin BETWEEN '2025-01-01 00:00:00' AND '2025-01-31 23:59:59';
+
+-- 2º ¿Indica qué clientes tienen facturas pendientes de pago? Además, indica la suma total pendiente por cliente.
+
+SELECT c.num_documento_cliente AS 'Documento', CONCAT(c.nombre, " ", c.apellido1," ", c.apellido2) AS 'Nombre Completo', SUM(f.precio_total) AS 'Importe Total Pendiente'
+FROM clientes c 
+JOIN facturas f ON c.num_documento_cliente = f.num_documento_cliente
+JOIN detalles_facturas df ON f.id_factura = df.id_factura
+WHERE estado_pago = 'PENDIENTE'
+GROUP by c.num_documento_cliente;
 
 
+-- 3º- ¿Cuántos clientes se han registrado en el cuarto trimestre del año 2024, además son Londres e indica cuantas veces se han registrado?
+SELECT * FROM clientes c 
+JOIN registroClientes rc ON c.num_documento_cliente = rc.num_documento_cliente
+JOIN provincias pr ON id.
+WHERE fecha_inicio BETWEEN '2024-10-01 00:00:00' AND '2024-12-30 23:59:59'
+AND ;
 
 
-A
+-- 4º- Calcula el total facturado por cada cliente y ordena los resultados de mayor a menor.
