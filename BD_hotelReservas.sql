@@ -936,7 +936,7 @@ AND fecha_fin BETWEEN '2025-01-01 00:00:00' AND '2025-01-31 23:59:59';
 
 -- 2º ¿Indica qué clientes tienen facturas pendientes de pago? Además, indica la suma total pendiente por cliente.
 
-SELECT c.num_documento_cliente AS 'Documento', CONCAT(c.nombre, " ", c.apellido1," ", c.apellido2) AS 'Nombre Completo', SUM(f.precio_total) AS 'Importe Total Pendiente'
+SELECT c.num_documento_cliente AS 'Documento', CONCAT(c.nombre, " ", c.apellido1," ", COALESCE(c.apellido2, " ")) AS 'Nombre Completo', SUM(f.precio_total) AS 'Importe Total Pendiente'
 FROM clientes c 
 JOIN facturas f ON c.num_documento_cliente = f.num_documento_cliente
 JOIN detalles_facturas df ON f.id_factura = df.id_factura
@@ -964,3 +964,22 @@ WHERE EXISTS (SELECT f.num_documento_cliente FROM facturas f
     WHERE f.num_documento_cliente= c.num_documento_cliente )
 GROUP BY c.num_documento_cliente
 ORDER BY SUM(f.precio_total) DESC;
+
+
+-- 5º - Haz un listado con UNION de los servicios de excursión y alquiler, mostrando su nombre y precio.
+--  Diferenciados por columnas para cada tipo por cliente (id y nombre completo en una columna) que posea un servicio.
+
+SELECT c.num_documento_cliente, CONCAT (c.nombre, " ", c.apellido1, " ", COALESCE(c.apellido2, " ")) AS "Nombre Completo", 
+ex.nombreExcursion AS "Excursión", ex.precio AS "Precio Excursión", ' ' AS "Vehículo", ' ' AS "Precio Vehículo"
+FROM clientes c 
+JOIN servicioCliente sc ON c.num_documento_cliente = sc.num_documento_cliente
+JOIN servicios_extras se ON sc.id_servicio = se.id_servicio
+JOIN excursiones ex ON se.id_servicio = ex.id_servicio
+UNION
+SELECT c.num_documento_cliente, CONCAT (c.nombre, " ", c.apellido1, " ", COALESCE(c.apellido2, " ")) AS "Nombre Completo", 
+' ' AS "Excursión", ' ' AS "Precio Excursión", tv.tipoVehiculo AS "Vehículo", av.precio "Precio Vehículo"
+FROM clientes c 
+JOIN servicioCliente sc ON c.num_documento_cliente = sc.num_documento_cliente
+JOIN servicios_extras se ON sc.id_servicio = se.id_servicio
+JOIN alquiler_vehiculos av ON se.id_servicio = av.id_servicio
+JOIN tipoVehiculo tv ON av.tipo_vehiculo = tv.id_tipoVehiculo; 
