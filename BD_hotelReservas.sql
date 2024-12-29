@@ -944,12 +944,23 @@ WHERE estado_pago = 'PENDIENTE'
 GROUP by c.num_documento_cliente;
 
 
--- 3º- ¿Cuántos clientes se han registrado en el cuarto trimestre del año 2024, además son Londres e indica cuantas veces se han registrado?
-SELECT * FROM clientes c 
-JOIN registroClientes rc ON c.num_documento_cliente = rc.num_documento_cliente
-JOIN provincias pr ON id.
-WHERE fecha_inicio BETWEEN '2024-10-01 00:00:00' AND '2024-12-30 23:59:59'
-AND ;
+-- 3º- ¿Cuántos clientes se han registrado son Madrid que tengan servicios extras?
+SELECT c.*, ts.tipoServicio FROM clientes c 
+JOIN facturas f ON c.num_documento_cliente = f.num_documento_cliente
+JOIN detalles_facturas df ON f.id_factura = df.id_factura
+JOIN tipoServicio ts ON df.id_servicio = ts.id_tipo_servicio
+WHERE c.id_provincia = (
+    SELECT p.id_provincia
+    FROM provincias p
+    WHERE p.nombre = 'Madrid'
+);
+
 
 
 -- 4º- Calcula el total facturado por cada cliente y ordena los resultados de mayor a menor.
+SELECT c.*, SUM(f.precio_total) AS "Total Facturas" FROM clientes c
+JOIN facturas f ON c.num_documento_cliente = f.num_documento_cliente
+WHERE EXISTS (SELECT f.num_documento_cliente FROM facturas f
+    WHERE f.num_documento_cliente= c.num_documento_cliente )
+GROUP BY c.num_documento_cliente
+ORDER BY SUM(f.precio_total) DESC;
