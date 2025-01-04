@@ -983,3 +983,6 @@ JOIN servicioCliente sc ON c.num_documento_cliente = sc.num_documento_cliente
 JOIN servicios_extras se ON sc.id_servicio = se.id_servicio
 JOIN alquiler_vehiculos av ON se.id_servicio = av.id_servicio
 JOIN tipoVehiculo tv ON av.tipo_vehiculo = tv.id_tipoVehiculo; 
+
+-- 6º-Teniendo en cuenta cada empleado que ha realizado registros. Calcula la media de ingresos de todas las facturas de los 
+-- clientes que haya registrado cada empleado y Ordénalo de manera ascendente.
