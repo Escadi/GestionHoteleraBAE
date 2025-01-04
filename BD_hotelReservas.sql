@@ -984,5 +984,51 @@ JOIN servicios_extras se ON sc.id_servicio = se.id_servicio
 JOIN alquiler_vehiculos av ON se.id_servicio = av.id_servicio
 JOIN tipoVehiculo tv ON av.tipo_vehiculo = tv.id_tipoVehiculo; 
 
--- 6º-Teniendo en cuenta cada empleado que ha realizado registros. Calcula la media de ingresos de todas las facturas de los 
+-- 6º-Teniendo en cuenta cada empleado que ha realizado registros, muestra el nombre del empleado y categoría. Además calcula la media de ingresos de todas las facturas de los 
 -- clientes que haya registrado cada empleado y Ordénalo de manera ascendente.
+
+SELECT CONCAT(e.NombreEmpleado, " ", e.apellidos) AS "Nombre Empleado", c.nombre_cargo AS "Cargo", 
+ROUND(AVG(f.precio_total),2) AS "Media Facturado"
+FROM empleados e 
+JOIN cargos c ON e.id_cargoEmpleado = c.id_cargo
+JOIN registroClientes rc ON e.id_empleado = rc.id_empleado
+JOIN facturas f ON rc.num_documento_cliente = f.num_documento_cliente
+JOIN detalles_facturas df ON f.id_factura = df.id_factura
+WHERE (estado_pago = "PAGADO")
+GROUP BY e.id_empleado, c.nombre_cargo
+ORDER BY "Media Facturado" ASC;
+
+-- 7º Muestra un listado de los detalles de facturas impagas, junto con el nombre del cliente, indica el importe y
+-- por separado indica el de que si se trata de reserva o servicio, y a que factura está vinculada.
+
+SELECT CONCAT(c.nombre, " ", c.apellido1, " ", COALESCE(c.apellido2, "")) AS "Nombre Cliente", 
+df.subtotal AS "Subtotal Pendiente", df.num_reserva AS "Reserva", df.tipo_detalle AS "Servicio",
+f.id_factura AS "Factura"
+FROM clientes c
+JOIN facturas f ON c.num_documento_cliente = f.num_documento_cliente
+JOIN detalles_facturas df ON f.id_factura = df.id_factura
+WHERE (df.estado_pago = "PENDIENTE" AND df.tipo_detalle = "RESERVA")
+UNION
+SELECT CONCAT(c.nombre, " ", c.apellido1, " ", COALESCE(c.apellido2, "")) AS "Nombre Cliente", 
+df.subtotal AS "Subtotal Pendiente", df.num_reserva AS "Reserva", 
+CONCAT(df.tipo_detalle," (", ts.tipoServicio ,")") AS "Servicio",
+f.id_factura AS "Factura"
+FROM clientes c
+JOIN facturas f ON c.num_documento_cliente = f.num_documento_cliente
+JOIN detalles_facturas df ON f.id_factura = df.id_factura
+JOIN servicioCliente sc ON c.num_documento_cliente = sc.num_documento_cliente
+JOIN servicios_extras se ON sc.id_servicio = se.id_servicio
+JOIN tipoServicio ts ON se.tipo_servicio = ts.id_tipo_servicio
+WHERE (df.estado_pago = "PENDIENTE" AND df.tipo_detalle = "SERVICIO")
+;
+
+
+-- 8º Indica las reviews realizadas por los usuarios con menos de 4 estrellas y su país de origen sea Reino Unido
+-- usando una subconsulta.
+SELECT r.comentario AS "Comentario", r.puntuacion AS "Puntuación"
+FROM reviews r
+WHERE r.puntuacion < 4 AND r.num_documento_cliente IN (
+SELECT c.num_documento_cliente
+FROM clientes c
+JOIN paises p ON c.id_pais = p.id_pais
+WHERE p.nombre = "Reino Unido");
