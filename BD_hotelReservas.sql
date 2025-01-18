@@ -1032,3 +1032,54 @@ SELECT c.num_documento_cliente
 FROM clientes c
 JOIN paises p ON c.id_pais = p.id_pais
 WHERE p.nombre = "Reino Unido");
+
+
+
+
+
+
+
+--3º.- Realiza un procedimiento con un cursor que, calcule el total de las facturas de una reserva
+-- (incluido clientes vinculados a la reserva que tengan gastos extras) en un periodo
+-- entre dos fechas, siendo las fechas de inicio y fin datos obligatorios a introducir.
+-- Ten en cuenta que el impuesto en el detalle de las facturas está a parte y debe sumarse,
+-- Al final debe de mostrarse el resultado total de todas las facturas.
+DROP PROCEDURE IF EXISTS totalFacturasReserva;
+DELIMITER //
+CREATE PROCEDURE totalFacturasReserva(IN p_fechaInicio DATETIME, IN p_fechaFin DATETIME)
+BEGIN
+    DECLARE done INT DEFAULT 0;
+    DECLARE total DECIMAL(10,2) DEFAULT 0.00;
+    DECLARE total_general DECIMAL(10,2) DEFAULT 0.00;
+    DECLARE reserva_id INT;
+    DECLARE cur CURSOR FOR 
+        SELECT numero_reserva 
+        FROM reservas 
+        WHERE fecha_inicio BETWEEN p_fechaInicio AND p_fechaFin;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+    OPEN cur;
+    leer_loop: LOOP
+        FETCH cur INTO reserva_id;
+        IF done THEN
+            LEAVE leer_loop;
+        END IF;
+
+        SELECT SUM(df.subtotal + df.igic) INTO total
+        FROM detalles_facturas df
+        WHERE df.num_reserva = reserva_id;
+
+        SET total_general = total_general + total;
+
+        SELECT CONCAT('Reserva ID: ', reserva_id, ' - Total Facturado: ', total) AS "Resultado de la Reserva";
+    END LOOP;
+
+    CLOSE cur;
+
+    SELECT CONCAT('Total General Facturado: ', total_general) AS "Resultado General";
+END //
+DELIMITER ;
+
+
+CALL totalFacturasReserva('2024-12-19 00:00:00', '2024-12-31 23:59:59');
+
