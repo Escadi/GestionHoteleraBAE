@@ -1091,7 +1091,9 @@ END //
 DELIMITER ;
 
 INSERT INTO facturas (num_documento_cliente, precio_total)
-VALUES ('12345678A', 100.00);
+VALUES ('45678901D', 100.00);
+
+
 
 
 
