@@ -1033,13 +1033,71 @@ FROM clientes c
 JOIN paises p ON c.id_pais = p.id_pais
 WHERE p.nombre = "Reino Unido");
 
+-- Pogramación 
+
+-- 1º.- Crea una función que muestre todas las facturas de un cliente, por separado y luego su total cuando 
+-- sea llamada la función, esta función se mostrará cuando un cliente realice una reserva o compra de servicios extras.
+-- Además otro para cuando se actualice o modifique una factura.
+
+
+DROP FUNCTION IF EXISTS mostrarFacturasCliente;
+DELIMITER //
+CREATE FUNCTION mostrarFacturasCliente(p_cliente_num VARCHAR(9))
+RETURNS VARCHAR(1000)
+DETERMINISTIC
+BEGIN
+    DECLARE facturas_texto VARCHAR(1000);
+    DECLARE total DECIMAL(10, 2);
+    
+    SET facturas_texto = '';
+    SET total = 0.00;
+    -- Esto vale para concatenar en una sola línea.
+    SELECT GROUP_CONCAT(CONCAT('Factura ID: ', id_factura, ', Monto: ', precio_total) SEPARATOR '; ')
+    INTO facturas_texto
+    FROM facturas 
+    WHERE num_documento_cliente = p_cliente_num;
+
+    SELECT SUM(precio_total) 
+    INTO total
+    FROM facturas
+    WHERE num_documento_cliente = p_cliente_num;
+
+    RETURN CONCAT(facturas_texto, 'Total Facturas ', num_documento_cliente, ': ', total);
+END //
+
+DELIMITER ;
+
+
+DROP TRIGGER IF EXISTS nuevaFactura;
+DELIMITER //
+CREATE TRIGGER nuevaFactura
+AFTER INSERT ON facturas
+FOR EACH ROW
+BEGIN
+    CALL mostrarFacturasCliente(NEW.num_documento_cliente);
+END //
+
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS actualizarFactura;
+DELIMITER //
+CREATE TRIGGER actualizarFactura
+AFTER UPDATE ON facturas
+FOR EACH ROW
+BEGIN
+    CALL mostrarFacturasCliente(NEW.num_documento_cliente);
+END //
+
+DELIMITER ;
+
+INSERT INTO facturas (num_documento_cliente, precio_total)
+VALUES ('12345678A', 100.00);
 
 
 
 
 
-
---3º.- Realiza un procedimiento con un cursor que, calcule el total de las facturas de una reserva
+-- 3º.- Realiza un procedimiento con un cursor que, calcule el total de las facturas de una reserva
 -- (incluido clientes vinculados a la reserva que tengan gastos extras) en un periodo
 -- entre dos fechas, siendo las fechas de inicio y fin datos obligatorios a introducir.
 -- Ten en cuenta que el impuesto en el detalle de las facturas está a parte y debe sumarse,
@@ -1082,4 +1140,7 @@ DELIMITER ;
 
 
 CALL totalFacturasReserva('2024-12-19 00:00:00', '2024-12-31 23:59:59');
+
+CALL totalFacturasReserva('2024-12-26 00:00:00', '2024-12-31 23:59:59');
+
 
