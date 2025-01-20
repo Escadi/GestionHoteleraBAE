@@ -1041,7 +1041,6 @@ WHERE p.nombre = "Reino Unido");
 
 -- Pogramación 
 
--- ------------------------------ Ojo, no funciona, no se pueden llamar a funciones en los Trigger, solo a procedimientos almacenados. ----------------------------
 
 -- 1º.- Crea una función que descuente un 10% a las nuevas facturas que si lo indican con un booleano, se aplicará,
 -- de lo contrario se mantendrán con el precio original. Luego realiza un trigger de inserción que llame a la función,
@@ -1049,6 +1048,7 @@ WHERE p.nombre = "Reino Unido");
 
 
 DROP FUNCTION IF EXISTS descuentoTemporada;
+
 DELIMITER //
 CREATE FUNCTION descuentoTemporada(p_aplicarDescuento BOOLEAN, p_precio DECIMAL(10,2))
 RETURNS DECIMAL(10,2)  
@@ -1083,38 +1083,39 @@ VALUES ('12345678A', 800.00);
 
 
 
- 
+/**
+Crea un procedimiento almacenado que calcula el total de reservas y el ingreso total 
+por cada mes en un hotel. Este procedimiento almacenado agrupa los datos por mes y año.
+**/
 
 
+DROP PROCEDURE IF EXISTS totalReservasIngresos;
+DELIMITER //
+
+CREATE PROCEDURE totalReservasIngresos(IN mes INT, IN anio INT)
+BEGIN
+    SELECT
+        YEAR(fecha_inicio) AS 'Año',
+        MONTH(fecha_inicio) AS 'Mes',
+        COUNT(*) AS 'Total De Reservas',
+        SUM(precio) AS 'Ingreso Total'
+    FROM reservas
+    WHERE YEAR(fecha_inicio) = anio 
+    AND MONTH(fecha_inicio) = mes
+    GROUP BY YEAR(fecha_inicio), MONTH(fecha_inicio)
+    ORDER BY anio, mes;
+END//
+
+DELIMITER ;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-SELECT mostrarFacturasCliente ('45678901D');
-
--- ------------------------------ Ojo, no funciona, no se pueden llamar a funciones en los Trigger, solo a procedimientos almacenados. ----------------------------
 
 -- 3º.- Realiza un procedimiento con un cursor que, calcule el total de las facturas de una reserva
 -- (incluido clientes vinculados a la reserva que tengan gastos extras) en un periodo
 -- entre dos fechas, siendo las fechas de inicio y fin datos obligatorios a introducir.
 -- Ten en cuenta que el impuesto en el detalle de las facturas está a parte y debe sumarse,
 -- Al final debe de mostrarse el resultado total de todas las facturas.
+
 DROP PROCEDURE IF EXISTS totalFacturasReserva;
 DELIMITER //
 CREATE PROCEDURE totalFacturasReserva(IN p_fechaInicio DATETIME, IN p_fechaFin DATETIME)
@@ -1158,10 +1159,7 @@ CALL totalFacturasReserva('2024-12-26 00:00:00', '2024-12-31 23:59:59');
 
 
 
-
-
-
- DROP FUNCTION IF EXISTS mostrarFacturasCliente;
+DROP FUNCTION IF EXISTS mostrarFacturasCliente;
 DELIMITER //
 CREATE FUNCTION mostrarFacturasCliente(p_cliente_num VARCHAR(9))
 RETURNS VARCHAR(1000)
@@ -1210,4 +1208,5 @@ BEGIN
     -- Aquí puedes utilizar el valor de 'resultado' según sea necesario
 END //
 DELIMITER ;
+
 
