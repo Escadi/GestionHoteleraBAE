@@ -1047,12 +1047,6 @@ WHERE p.nombre = "Reino Unido");
 -- sea llamada la función, esta función se mostrará cuando un cliente realice una reserva o compra de servicios extras.
 -- Además otro para cuando se actualice o modifique una factura.
 
-CREATE TABLE log_facturas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    mensaje VARCHAR(1000),
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 
 DROP FUNCTION IF EXISTS mostrarFacturasCliente;
 DELIMITER //
@@ -1103,8 +1097,6 @@ FOR EACH ROW
 BEGIN
     DECLARE resultado VARCHAR(1000);
     SET resultado = mostrarFacturasCliente(NEW.num_documento_cliente);
-    SET resultado = mostrarFacturasCliente(NEW.num_documento_cliente);
-    INSERT INTO log_facturas (mensaje) VALUES (resultado);
 END //
 
 DELIMITER ;
@@ -1218,3 +1210,4 @@ BEGIN
     -- Aquí puedes utilizar el valor de 'resultado' según sea necesario
 END //
 DELIMITER ;
+
