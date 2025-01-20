@@ -1033,11 +1033,25 @@ FROM clientes c
 JOIN paises p ON c.id_pais = p.id_pais
 WHERE p.nombre = "Reino Unido");
 
+
+
+
+
+
+
 -- Pogramación 
+
+-- ------------------------------ Ojo, no funciona, no se pueden llamar a funciones en los Trigger, solo a procedimientos almacenados. ----------------------------
 
 -- 1º.- Crea una función que muestre todas las facturas de un cliente, por separado y luego su total cuando 
 -- sea llamada la función, esta función se mostrará cuando un cliente realice una reserva o compra de servicios extras.
 -- Además otro para cuando se actualice o modifique una factura.
+
+CREATE TABLE log_facturas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    mensaje VARCHAR(1000),
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 
 DROP FUNCTION IF EXISTS mostrarFacturasCliente;
@@ -1062,7 +1076,7 @@ BEGIN
     FROM facturas
     WHERE num_documento_cliente = p_cliente_num;
 
-    RETURN CONCAT(facturas_texto, 'Total Facturas ', num_documento_cliente, ': ', total);
+    RETURN CONCAT(facturas_texto, 'Total Facturas: ', total);
 END //
 
 DELIMITER ;
@@ -1074,7 +1088,9 @@ CREATE TRIGGER nuevaFactura
 AFTER INSERT ON facturas
 FOR EACH ROW
 BEGIN
-    CALL mostrarFacturasCliente(NEW.num_documento_cliente);
+    DECLARE resultado VARCHAR(1000);
+    SET resultado = mostrarFacturasCliente(NEW.num_documento_cliente);
+    INSERT INTO log_facturas (mensaje) VALUES (resultado);
 END //
 
 DELIMITER ;
@@ -1085,7 +1101,10 @@ CREATE TRIGGER actualizarFactura
 AFTER UPDATE ON facturas
 FOR EACH ROW
 BEGIN
-    CALL mostrarFacturasCliente(NEW.num_documento_cliente);
+    DECLARE resultado VARCHAR(1000);
+    SET resultado = mostrarFacturasCliente(NEW.num_documento_cliente);
+    SET resultado = mostrarFacturasCliente(NEW.num_documento_cliente);
+    INSERT INTO log_facturas (mensaje) VALUES (resultado);
 END //
 
 DELIMITER ;
@@ -1095,9 +1114,9 @@ VALUES ('45678901D', 100.00);
 
 
 
+SELECT mostrarFacturasCliente ('45678901D');
 
-
-
+-- ------------------------------ Ojo, no funciona, no se pueden llamar a funciones en los Trigger, solo a procedimientos almacenados. ----------------------------
 
 -- 3º.- Realiza un procedimiento con un cursor que, calcule el total de las facturas de una reserva
 -- (incluido clientes vinculados a la reserva que tengan gastos extras) en un periodo
@@ -1146,3 +1165,56 @@ CALL totalFacturasReserva('2024-12-19 00:00:00', '2024-12-31 23:59:59');
 CALL totalFacturasReserva('2024-12-26 00:00:00', '2024-12-31 23:59:59');
 
 
+
+
+
+
+ DROP FUNCTION IF EXISTS mostrarFacturasCliente;
+DELIMITER //
+CREATE FUNCTION mostrarFacturasCliente(p_cliente_num VARCHAR(9))
+RETURNS VARCHAR(1000)
+DETERMINISTIC
+BEGIN
+    DECLARE facturas_texto VARCHAR(1000);
+    DECLARE total DECIMAL(10, 2);
+    
+    SET facturas_texto = '';
+    SET total = 0.00;
+    -- Esto vale para concatenar en una sola línea.
+    SELECT GROUP_CONCAT(CONCAT('Factura ID: ', id_factura, ', Monto: ', precio_total) SEPARATOR '; ')
+    INTO facturas_texto
+    FROM facturas 
+    WHERE num_documento_cliente = p_cliente_num;
+
+    SELECT SUM(precio_total) 
+    INTO total
+    FROM facturas
+    WHERE num_documento_cliente = p_cliente_num;
+
+    RETURN CONCAT(facturas_texto, 'Total Facturas: ', total);
+END //
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS nuevaFactura;
+DELIMITER //
+CREATE TRIGGER nuevaFactura
+AFTER INSERT ON facturas
+FOR EACH ROW
+BEGIN
+    DECLARE resultado VARCHAR(1000);
+    SET resultado = mostrarFacturasCliente(NEW.num_documento_cliente);
+    -- Aquí puedes utilizar el valor de 'resultado' según sea necesario
+END //
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS actualizarFactura;
+DELIMITER //
+CREATE TRIGGER actualizarFactura
+AFTER UPDATE ON facturas
+FOR EACH ROW
+BEGIN
+    DECLARE resultado VARCHAR(1000);
+    SET resultado = mostrarFacturasCliente(NEW.num_documento_cliente);
+    -- Aquí puedes utilizar el valor de 'resultado' según sea necesario
+END //
+DELIMITER ;
