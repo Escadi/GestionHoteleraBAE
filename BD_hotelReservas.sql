@@ -1043,34 +1043,66 @@ WHERE p.nombre = "Reino Unido");
 
 -- ------------------------------ Ojo, no funciona, no se pueden llamar a funciones en los Trigger, solo a procedimientos almacenados. ----------------------------
 
--- 1º.- Crea una función que descuente un 10% a las nuevas facturas que estén comprendiddas siempre entre los meses
--- de abril y junio.
-
+-- 1º.- Crea una función que descuente un 10% a las nuevas facturas que si lo indican con un booleano, se aplicará,
+-- de lo contrario se mantendrán con el precio original. Luego realiza un trigger de inserción que llame a la función,
+-- solo será true el booleano si la factura es de más de 700€, en caso contrario será falso.
 
 
 DROP FUNCTION IF EXISTS descuentoTemporada;
 DELIMITER //
-CREATE FUNCTION descuentoTemporada(p_fechaInicio DATETIME, p_fechaFin DATETIME, p_precio DECIMAL(10,2))
+CREATE FUNCTION descuentoTemporada(p_aplicarDescuento BOOLEAN, p_precio DECIMAL(10,2))
 RETURNS DECIMAL(10,2)  
 DETERMINISTIC
-
-
+BEGIN
+    DECLARE precio_final DECIMAL(10,2);
+    IF p_aplicarDescuento THEN
+        SET precio_final = p_precio * 0.90;
+    ELSE
+        SET precio_final = p_precio;
+    END IF;
+    RETURN precio_final;
+END //
+DELIMITER ;
 
 DROP TRIGGER IF EXISTS nuevaFactura;
 DELIMITER //
 CREATE TRIGGER nuevaFactura
-AFTER INSERT ON facturas
+BEFORE INSERT ON facturas
 FOR EACH ROW
 BEGIN
-    DECLARE resultado VARCHAR(1000);
-    SET resultado = mostrarFacturasCliente(NEW.num_documento_cliente);
+    IF NEW.precio_total > 700 THEN
+        SET NEW.precio_total = descuentoTemporada(TRUE, NEW.precio_total);
+    ELSE
+        SET NEW.precio_total = descuentoTemporada(FALSE, NEW.precio_total);
+    END IF;
 END //
-
 DELIMITER ;
 
-
 INSERT INTO facturas (num_documento_cliente, precio_total)
-VALUES ('45678901D', 100.00);
+VALUES ('12345678A', 800.00);
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
